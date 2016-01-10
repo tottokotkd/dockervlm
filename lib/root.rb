@@ -1,5 +1,6 @@
 require_relative './help'
 require_relative './export'
+require_relative './import'
 
 def root(mode, args, config)
   case mode
