@@ -2,27 +2,18 @@ require 'yaml'
 require_relative './container'
 require_relative './option_parser'
 
-def export(args, default_config)
+def export(args, config)
 
   puts ''
   puts "* \e[35mdockervlm\e[0m: \e[32mexport\e[0m"
   puts ''
 
   # parse args
-  options = Parser.parseForExportOptions(args, default_config)
-
-  # read docker-compose.yml
-  begin
-    config = YAML.load_file('docker-compose.yml')
-    puts 'docker-compose.yml read.'
-  rescue
-    $stderr.puts 'error: docker-compose.yml not found; exit.'
-    exit 1
-  end
+  options = Parser.parseForExportOptions(args, config)
 
   # parse & find out volumes
   begin
-    containers = Containers.parseConfigYaml(config)
+    containers = Containers.parseConfigYaml(config.docker_compose)
     containers.each.with_index {|c, i| puts "\n\e[36mtarget #{i + 1}\e[0m"; puts c}
   rescue => e
     $stderr.puts e

@@ -1,5 +1,5 @@
 require 'optparse'
-require_relative './default_config'
+require_relative './dockervlm_config'
 
 class ExportOptions < Struct.new(:destination, :file_name_format)
   def initialize(destination, file_name_format)
@@ -8,9 +8,9 @@ class ExportOptions < Struct.new(:destination, :file_name_format)
 end
 
 module Parser
-  def self.parseForExportOptions(args, default_config)
-    destination = default_config.destination
-    file_name_format = default_config.file_name_format
+  def self.parseForExportOptions(args, config)
+    destination = config.destination
+    file_name_format = config.file_name_format
     options = ExportOptions.new(destination, file_name_format)
     OptionParser.new{|opt|
       opt.on('-d VAL') {|v| destination = v }
