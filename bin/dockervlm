@@ -3,15 +3,17 @@
 # require
 $:.unshift File.join(File.dirname(__FILE__), '../lib')
 require 'root'
-require 'default_config'
+require 'dockervlm_config'
 
-def main(mode, params, default_config)
-  root(mode, params, default_config)
+def main(mode, params, config)
+  root(mode, params, config)
 end
+
+default_config_path = File.join(File.dirname(__FILE__), '../config.yml')
+docker_compose_path = './docker-compose.yml'
+config = DockervlmConfig.new(default_config_path, docker_compose_path)
 
 mode = ARGV[0]
 params = ARGV.drop(1)
-config_path = File.join(File.dirname(__FILE__), '../config.yml')
-default_config = DefaultConfig.new(config_path)
 
-main(mode, params, default_config)
+main(mode, params, config)
