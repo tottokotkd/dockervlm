@@ -13,6 +13,8 @@ def export(args, config)
 
   # parse & find out volumes
   begin
+    puts ''
+    puts 'export targets ------'
     containers = Containers.parseConfigYaml(config.docker_compose)
     containers.each.with_index {|c, i| puts "\n\e[36mtarget #{i + 1}\e[0m"; puts c}
   rescue => e
@@ -23,9 +25,11 @@ def export(args, config)
   # export volumes
   begin
     containers.each {|c|
+      puts ''
+      puts "exporting #{c.container_name}"
       prs = c.export(options)
     }
   rescue => e
-    puts "error: #{e}"
+    $stderr.puts "error: #{e}"
   end
 end

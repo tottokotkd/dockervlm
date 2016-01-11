@@ -1,7 +1,7 @@
 require 'open3'
 require_relative 'error'
 
-class Container < Struct.new(:container_name, :id, :volumes)
+Container = Struct.new(:container_name, :id, :volumes) do
 
   def export
       o, e, s = Open3.capture3("docker-compose ps -q #{container_name}")
@@ -54,16 +54,16 @@ module Containers
   def self.export(options, container)
     tar_file = makeTimestampFileName(options.file_name_format)
     volume = makeDataVolumePath(File.join(options.destination, container.container_name))
-    o, e, s = Open3.capture3("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar czvf #{tar_file} #{container.targets}")
-    raise DockerExportError.new(e) if s != 0
-    return o
+    # o, e, s = Open3.capture3("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar czvf #{tar_file} #{container.targets}")
+    system("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar czvf #{tar_file} #{container.targets}")
+    raise DockerExportError.new(e) if $? != 0
   end
 
   def self.import(options, container)
     archive = findArchiveFile(options.source, container.container_name)
     volume = makeDataVolumePath(File.join(options.source, container.container_name))
-    o, e, s = Open3.capture3("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar xzvf #{File.join(CONTAINER_VOLUME, archive)} -C /")
-    raise DockerExportError.new(e) if s != 0
+    system("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar xzvf #{File.join(CONTAINER_VOLUME, archive)} -C /")
+    raise DockerExportError.new(e) if $? != 0
     return o
   end
 

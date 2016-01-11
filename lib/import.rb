@@ -12,6 +12,8 @@ def import(args, config)
 
   # parse & find out volumes
   begin
+    puts ''
+    puts 'export targets ------'
     containers = Containers.parseConfigYaml(config.docker_compose)
     containers.each.with_index {|c, i| puts "\n\e[36mtarget #{i + 1}\e[0m"; puts c}
   rescue => e
@@ -22,6 +24,8 @@ def import(args, config)
   # export volumes
   begin
     containers.each {|c|
+      puts ''
+      puts "importing #{c.container_name}"
       prs = c.import(options)
     }
   rescue => e
