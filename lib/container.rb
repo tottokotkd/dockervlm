@@ -45,26 +45,24 @@ module Containers
   end
 
   def self.getContainerId(name)
-    o, e, s = Open3.capture3("docker-compose ps -q #{name}")
-    raise DockerComposeError.new(e) if s != 0
-    raise DockerComposeError.new("container of #{name} not found... no running containers?") if o.strip == ''
-    return o.strip
+    id = `docker-compose ps -q #{name}`.strip
+    raise DockerComposeError.new(e) if $? != 0
+    raise DockerComposeError.new("container of #{name} not found... no running containers?") if id == ''
+    return id
   end
 
   def self.export(options, container)
     tar_file = makeTimestampFileName(options.file_name_format)
     volume = makeDataVolumePath(File.join(options.destination, container.container_name))
-    # o, e, s = Open3.capture3("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar czvf #{tar_file} #{container.targets}")
-    system("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar czvf #{tar_file} #{container.targets}")
+    system("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar czvhf #{tar_file} #{container.targets}")
     raise DockerExportError.new(e) if $? != 0
   end
 
   def self.import(options, container)
     archive = findArchiveFile(options.source, container.container_name)
     volume = makeDataVolumePath(File.join(options.source, container.container_name))
-    system("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar xzvf #{File.join(CONTAINER_VOLUME, archive)} -C /")
+    system("docker run --rm --volumes-from #{container.id} -v #{volume} busybox tar xzvhf #{File.join(CONTAINER_VOLUME, archive)} -C /")
     raise DockerExportError.new(e) if $? != 0
-    return o
   end
 
   private
