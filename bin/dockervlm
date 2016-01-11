@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
 # require
-$:.unshift File.join(File.dirname(__FILE__), '../lib')
+dockervlm_path = File.dirname(File.dirname(File.realpath(__FILE__)))
+
+puts File.join(dockervlm_path, 'lib')
+$:.unshift File.join(dockervlm_path, 'lib')
 require 'root'
 require 'dockervlm_config'
 
@@ -9,8 +12,8 @@ def main(mode, params, config)
   root(mode, params, config)
 end
 
-default_config_path = File.join(File.dirname(__FILE__), '../config.yml')
-docker_compose_path = './docker-compose.yml'
+default_config_path = File.join(dockervlm_path, 'config.yml')
+docker_compose_path = 'docker-compose.yml'
 config = DockervlmConfig.new(default_config_path, docker_compose_path)
 
 mode = ARGV[0]
