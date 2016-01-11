@@ -14,7 +14,6 @@ class DockervlmConfig
     # read docker-compose.yml
     begin
       @docker_compose = YAML.load_file(docker_compose_path)
-      puts 'docker-compose.yml read.'
     rescue
       $stderr.puts 'error: docker-compose.yml not found; exit.'
       exit 1
