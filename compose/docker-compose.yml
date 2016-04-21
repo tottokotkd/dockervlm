@@ -1,0 +1,22 @@
+wordpress:
+  image: wordpress
+  links:
+    - db:mysql
+  ports:
+    - 80:80
+  volumes_from:
+    - wpdata
+db:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: example
+  volumes_from:
+    - dbdata
+dbdata:
+  image: busybox
+  volumes:
+    - /var/lib/mysql
+wpdata:
+  image: busybox
+  volumes:
+    - /var/www/html
